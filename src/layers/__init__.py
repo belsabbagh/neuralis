@@ -20,31 +20,25 @@ class Layer:
     activation = None
     weights = None
     bias = None
+    input_shape = None
 
     def __init__(
         self,
         units,
         activation,
         weights: list[list[float]] = None,
-        bias: list[float] = None,
+        input_shape=None
     ) -> None:
         if weights is not None and len(weights) != units:
             raise ValueError(
                 f"Units ({units}) and weights ({len(weights)}) count mismatch!"
             )
-        if bias is not None and len(bias) != units:
-            raise ValueError(
-                f"Units ({units}) and weights ({len(bias)}) count mismatch!"
-            )
-        self.bias = bias
         self.activation = activation
-        self.neurons = [Neuron(activation, w, b)
-                        for w, b in zip(weights, bias)]
+        self.neurons = [Neuron(activation, w) for w in weights]
 
     def calc(self, x, verbose=1):
-        bias = [0] * len(self.neurons) if self.bias is None else self.bias
         if verbose:
-            print(f"Input: {x}\nWeights: {self.get_weights()}\nBias: {bias}")
+            print(f"Input: {x}\nWeights: {self.get_weights()}")
             print(f"--------------------------------------")
         return [i.calc(x) for i in self.neurons]
 
@@ -56,7 +50,7 @@ class Layer:
         for i, yi, w in zip(self.neurons, y, weights):
             d = i.back_calc(yi, deltas, w)
             res.append(d)
-        return res
+        return np.array(res)
 
     def __repr__(self) -> str:
         return f"Layer({len(self.neurons)}, {self.activation.__name__})"
