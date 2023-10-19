@@ -36,7 +36,7 @@ class Layer:
         self.activation = activation
         self.neurons = [Neuron(activation, w) for w in weights]
 
-    def calc(self, x, verbose=1):
+    def calc(self, x, verbose=0):
         if verbose:
             print(f"Input: {x}\nWeights: {self.get_weights()}")
             print(f"--------------------------------------")

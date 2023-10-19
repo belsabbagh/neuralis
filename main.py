@@ -38,10 +38,10 @@ if __name__ == "__main__":
     print(nn)
     for q in questions:
         x, d = q["x"], q["d"]
-        res, deltas = nn.calc(x, d)
+        res, _ = nn.calc(x, d)
         y = res[-1][0]
-        e = d - y
-        answers.append({"y": y, "e": e, "deltas": deltas})
-    for ans in answers:
-        print(f"y={ans['y']}, e={ans['e']}")
-        print(f"deltas={ans['deltas']}")
+        print(f"Before:", {"y": y, "e": d - y})
+        model = nn.fit(x, d, 200, learning_rate=1)
+        res, _ = model.calc(x, d)
+        y = res[-1][0]
+        print(f"After:", {"y": y, "e": d - y})
