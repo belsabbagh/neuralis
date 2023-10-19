@@ -4,11 +4,8 @@ from src.layers import Layer
 
 
 questions = [
-    {
-        "x": [0.4, -5.3, 0.03],
-        "d": 1,
-    },
-    {"x": [-2.2, 6.5, 3.5], "d": 0},
+    {"x": [0.4, -5.3, 0.03], "d": [1]},
+    {"x": [-2.2, 6.5, 3.5], "d": [0]},
 ]
 
 weights = [
@@ -30,18 +27,19 @@ units = [4, 4, 1]
 layers = [
     *[Layer(u, sigmoid, w) for u, w in zip(units, weights)],
 ]
-answers = []
+
 nn = FeedForward(layers)
 
 
 if __name__ == "__main__":
     print(nn)
     for q in questions:
+        print(f"Question: {q}")
         x, d = q["x"], q["d"]
         res, _ = nn.calc(x, d)
         y = res[-1][0]
-        print(f"Before:", {"y": y, "e": d - y})
-        model = nn.fit(x, d, 200, learning_rate=1)
+        print(f"  Before:", {"y": y, "e": d - y})
+        model = nn.fit(x, d, 20000, alpha=0.05)
         res, _ = model.calc(x, d)
         y = res[-1][0]
-        print(f"After:", {"y": y, "e": d - y})
+        print(f"  After:", {"y": y, "e": d - y})
