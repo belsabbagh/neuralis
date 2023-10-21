@@ -35,7 +35,7 @@ class Layer:
         if verbose:
             print(f"Input: {x}\nWeights: {self.get_weights()}")
             print(f"--------------------------------------")
-        return [i.calc(x) for i in self.neurons]
+        return [i(x) for i in self.neurons]
 
     def get_weights(self):
         return np.array([i.weights for i in self.neurons])

@@ -1,3 +1,4 @@
+from typing import Any
 import numpy as np
 
 
@@ -15,6 +16,9 @@ class Neuron:
 
     def calc(self, x):
         return self.activation(_sop(x, self.weights))
+
+    def __call__(self, x, *args: Any, **kwds: Any) -> Any:
+        return self.calc(x)
 
     def back_calc(self, y, delta, weights):
         return y * (1 - y) * np.dot(weights, delta)

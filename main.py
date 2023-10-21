@@ -36,10 +36,10 @@ if __name__ == "__main__":
     for q in questions:
         print(f"Question: {q}")
         x, d = q["x"], q["d"]
-        res, _ = nn.calc(x, d)
+        res, _ = nn(x, d)
         y = res[-1][0]
         print(f"  Before:", {"y": y, "e": d - y})
         model = nn.fit(x, d, 20000, alpha=0.05)
-        res, _ = model.calc(x, d)
+        res, _ = model(x, d)
         y = res[-1][0]
         print(f"  After:", {"y": y, "e": d - y})

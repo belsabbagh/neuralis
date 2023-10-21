@@ -45,11 +45,11 @@ class FeedForward:
 
     def fit(self, x, y, epochs=10, alpha=0.01):
         for i in range(epochs):
-            yhat, deltas = self.calc(x, y)
+            yhat, deltas = self(x, y)
             self.update_weights(yhat, deltas, alpha=alpha)
         return self
 
-    def calc(self, x, d):
+    def __call__(self, x, d):
         y = self.__calc(x)
         deltas = self.backpropagate(y, d)
         return y, deltas
