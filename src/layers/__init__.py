@@ -28,8 +28,8 @@ class Layer:
             raise ValueError(
                 f"Units ({units}) and weights ({len(weights)}) count mismatch!"
             )
-        self.activation = activation
-        self.neurons = [Neuron(activation, w) for w in weights]
+        self.activation, self.derv = activation
+        self.neurons = [Neuron(self.activation, w) for w in weights]
 
     def calc(self, x, verbose=0):
         if verbose:

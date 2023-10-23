@@ -3,7 +3,7 @@ from src.layers import Layer
 
 
 def update(w, y, d, alpha=0.1):
-    return np.array([w[0] - alpha * d, *(w[1:] - alpha * d * y)])
+    return np.array([w[0] + alpha * d, *(w[1:] - alpha * d * y)])
 
 
 def _backpropagate(layers, y, d):

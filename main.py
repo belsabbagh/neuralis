@@ -2,6 +2,7 @@ from src.networks import FeedForward
 from src.activations import sigmoid
 from src.layers import Layer
 
+activation = sigmoid()
 
 questions = [
     {"x": [0.4, -5.3, 0.03], "d": [1]},
@@ -25,7 +26,7 @@ weights = [
 ]
 units = [4, 4, 1]
 layers = [
-    *[Layer(u, sigmoid, w) for u, w in zip(units, weights)],
+    *[Layer(u, activation, w) for u, w in zip(units, weights)],
 ]
 
 nn = FeedForward(layers)
@@ -39,7 +40,7 @@ if __name__ == "__main__":
         res, _ = nn(x, d)
         y = res[-1][0]
         print(f"  Before:", {"y": y, "e": d - y})
-        model = nn.fit(x, d, 20000, alpha=0.05)
+        model = nn.fit(x, d, 2000, alpha=0.5)
         res, _ = model(x, d)
         y = res[-1][0]
         print(f"  After:", {"y": y, "e": d - y})
