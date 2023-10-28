@@ -11,7 +11,7 @@ class Neuron:
 
     def __init__(self, activation, weights) -> None:
         weights = np.array(weights)
-        self.activation = activation
+        self.activation, self.derv = activation
         self.weights = weights
 
     def calc(self, x):

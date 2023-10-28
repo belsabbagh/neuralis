@@ -16,7 +16,6 @@ class InputLayer:
 
 class Layer:
     neurons = None
-    activation = None
     weights = None
     bias = None
     input_shape = None
@@ -28,8 +27,7 @@ class Layer:
             raise ValueError(
                 f"Units ({units}) and weights ({len(weights)}) count mismatch!"
             )
-        self.activation, self.derv = activation
-        self.neurons = [Neuron(self.activation, w) for w in weights]
+        self.neurons = [Neuron(activation, w) for w in weights]
 
     def calc(self, x, verbose=0):
         if verbose:
@@ -48,7 +46,8 @@ class Layer:
         return str(self)
 
     def __str__(self) -> str:
-        return f"Layer({len(self.neurons)}, {self.activation.__name__})"
+        activation_name = self.neurons[0].activation.__name__
+        return f"Layer({len(self.neurons)}, {activation_name})"
 
     def __dict__(self):
         return {"activation": self.activation, "units": len(self.neurons)}
