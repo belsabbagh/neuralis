@@ -3,6 +3,14 @@ from src.layers import Layer
 
 
 def update(w, y, d, alpha=0.1):
+    """$$ w_{i+1} = w_i + \\alpha * d * y $$
+    where:
+    - $w_{i+1}$ is the new weight
+    - $w_i$ is the old weight
+    - $\\alpha$ is the learning rate
+    - $d$ is the delta
+    - $y$ is the output of the neuron
+    """
     return np.array([w[0] + alpha * d, *(w[1:] - alpha * d * y)])
 
 
@@ -29,6 +37,8 @@ class FeedForward:
         self.layers.append(layer)
 
     def __calc(self, x):
+        """Calculate the output of the network.
+        """
         res = []
         x_in = x
         for layer in self.layers:

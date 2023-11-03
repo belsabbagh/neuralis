@@ -15,6 +15,8 @@ class InputLayer:
 
 
 class Layer:
+    """Each layer has $n$ neurons, a weight matrix $W$ of size $n \\times m + 1$ where $m$ is the number of inputs, and an activation function $\\sigma$."""
+
     neurons = None
     weights = None
     bias = None
@@ -29,11 +31,14 @@ class Layer:
             )
         self.neurons = [Neuron(activation, w) for w in weights]
 
-    def calc(self, x, verbose=0):
+    def calc(self, x, verbose=1):
         if verbose:
             print(f"Input: {x}\nWeights: {self.get_weights()}")
+        y = [i(x) for i in self.neurons]
+        if verbose:
+            print(f"Output: {y}")
             print(f"--------------------------------------")
-        return [i(x) for i in self.neurons]
+        return y
 
     def get_weights(self):
         return np.array([i.weights for i in self.neurons])

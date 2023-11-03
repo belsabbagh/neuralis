@@ -15,6 +15,14 @@ class Neuron:
         self.weights = weights
 
     def calc(self, x):
+        """$$ y = \\sigma(\\sum_{i=1}^{n} w_i x_i) $$
+        where:
+        - $y$ is the output of the neuron
+        - $\\sigma$ is the activation function
+        - $n$ is the number of inputs
+        - $w_i$ is the $i$th weight
+        - $x_i$ is the $i$th input
+        """
         return self.activation(_sop(x, self.weights))
 
     def __call__(self, x, *args: Any, **kwds: Any) -> Any:
