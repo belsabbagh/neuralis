@@ -1,17 +1,5 @@
 import numpy as np
-from src.layers import Layer
-
-
-def update(w, y, d, alpha=0.1):
-    """$$ w_{i+1} = w_i + \\alpha * d * y $$
-    where:
-    - $w_{i+1}$ is the new weight
-    - $w_i$ is the old weight
-    - $\\alpha$ is the learning rate
-    - $d$ is the delta
-    - $y$ is the output of the neuron
-    """
-    return np.array([w[0] + alpha * d, *(w[1:] - alpha * d * y)])
+from src.layers import DenseLayer
 
 
 def _backpropagate(layers, y, d):
@@ -21,7 +9,7 @@ def _backpropagate(layers, y, d):
     hidden_layers, out_layer = layers[:-1], layers[-1]
     prev_weights = out_layer.get_weights()
     for yhat, layer in zip(y[::-1], hidden_layers[::-1]):
-        deltas = layer.backpropagate(yhat, deltas, prev_weights.T)
+        deltas = layer.backward(yhat, deltas, prev_weights.T)
         prev_weights = layer.get_weights()
         res.append(deltas)
     return np.array(res[::-1], dtype=object)
@@ -30,10 +18,10 @@ def _backpropagate(layers, y, d):
 class FeedForward:
     layers = None
 
-    def __init__(self, layers: list[Layer] = None) -> None:
+    def __init__(self, layers: list[DenseLayer] = None) -> None:
         self.layers = [] if layers is None else layers
 
-    def add(self, layer: Layer):
+    def add(self, layer: DenseLayer):
         self.layers.append(layer)
 
     def __calc(self, x):
@@ -42,16 +30,13 @@ class FeedForward:
         res = []
         x_in = x
         for layer in self.layers:
-            x_in = np.array(layer.calc(x_in))
+            x_in = np.array(layer.forward(x_in))
             res.append(x_in)
         return res
 
-    def update_weights(self, y_pred, deltas, update_fn=None, alpha=0.1):
-        if update_fn is None:
-            update_fn = update
+    def update_weights(self, y_pred, deltas,alpha=0.1):
         for layer, delta in zip(self.layers[1:], deltas):
-            for neuron, y, d in zip(layer.neurons, y_pred, delta):
-                neuron.weights = update_fn(neuron.weights, y, d, alpha)
+            layer.update(y_pred, delta, alpha=alpha)
 
     def fit(self, x, y, epochs=10, alpha=0.01):
         for i in range(epochs):

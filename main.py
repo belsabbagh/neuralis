@@ -1,6 +1,6 @@
 from src.networks import FeedForward
 from src.activations import sigmoid
-from src.layers import Layer
+from src.layers import Dense
 
 activation = sigmoid()
 
@@ -26,7 +26,7 @@ weights = [
 ]
 units = [4, 4, 1]
 layers = [
-    *[Layer(u, activation, w) for u, w in zip(units, weights)],
+    *[Dense(u, activation, w) for u, w in zip(units, weights)],
 ]
 
 nn = FeedForward(layers)

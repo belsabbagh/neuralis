@@ -1,6 +1,6 @@
 from src.networks import FeedForward
 from src.activations import relu
-from src.layers import Layer
+from src.layers import Dense
 
 activation = relu()
 units = [4, 3, 1]
@@ -23,7 +23,7 @@ weights = [
 
 nn = FeedForward(
     [
-        *[Layer(u, activation, w) for u, w in zip(units, weights)],
+        *[Dense(u, activation, w) for u, w in zip(units, weights)],
     ]
 )
 
