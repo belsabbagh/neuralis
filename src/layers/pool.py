@@ -2,8 +2,8 @@ import numpy as np
 from src.layers.base import Layer
 
 
-class MaxPool(Layer):
-    def __init__(self, pool_size, input_shape=None) -> None:
+class Pool(Layer):
+    def __init__(self, pool_size, input_shape=None, pool_fn=np.max) -> None:
         super().__init__()
         self.pool_size = pool_size
         self.input_shape = input_shape
@@ -58,3 +58,16 @@ class MaxPool(Layer):
         start = i * self.pool_size
         end = start + self.pool_size
         return start, end
+    
+    
+class MaxPool(Pool):
+    def __init__(self, pool_size, input_shape=None) -> None:
+        super().__init__(pool_size, input_shape=input_shape, pool_fn=np.max)
+        
+        
+class AveragePool(Pool):
+    def __init__(self, pool_size, input_shape=None) -> None:
+        super().__init__(pool_size, input_shape=input_shape, pool_fn=np.average)
+        
+        
+        
