@@ -40,7 +40,6 @@ class Convolutional(Layer):
             activation = identity()
         self.activation, self.derv = activation
         input_height, input_width = input_shape
-        self.num_filters = num_filters
         self.input_shape = input_shape
         self.filter_shape = (num_filters, filter_size, filter_size)
         self.output_shape = (
@@ -48,10 +47,8 @@ class Convolutional(Layer):
             input_height - filter_size + 1,
             input_width - filter_size + 1,
         )
-
-        self.filters = (
-            np.random.randn(*self.filter_shape) if filters is None else filters
-        )
+        self.filters = [np.random.randn(*self.filter_shape) for _ in range(num_filters)] if filters is None else filters
+        self.num_filters = len(self.filters)
         self.biases = np.random.randn(*self.output_shape)
 
     def forward(self, x, verbose=1):
@@ -59,7 +56,7 @@ class Convolutional(Layer):
         if verbose:
             print(f"Input: {x}")
         y = np.array(
-            [cross_correlate(x, self.filters[i]) for i in range(self.num_filters)]
+            [cross_correlate(x, i) for i in self.filters]
         )
         # y = self.activation(y)
         if verbose:

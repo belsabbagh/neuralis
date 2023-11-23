@@ -17,4 +17,4 @@ kernel = np.array([
 if __name__ == "__main__":
     conv = Convolutional((6, 6), 3, 1, filters=[kernel])
     y = conv.forward(mat)
-    print(y[0])
+    print(y)
