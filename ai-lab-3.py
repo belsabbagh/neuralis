@@ -1,5 +1,8 @@
-from src.layers import Convolutional
+from src import activations
+from src.layers import Convolutional, AveragePool, MaxPool
+from src.activations import tanh, sigmoid
 import numpy as np
+
 mat = [[
     [103, 102, 99, 101, 100, 120],
     [98, 97, 100, 98, 99, 94],
@@ -14,9 +17,14 @@ kernels = np.array([[[
     [0.3, 0.9, 1.2],
     [3.1, 1.2, 0.7],
 ]]])
+
+biases = np.full((1,4,4), 0.7)
+
 if __name__ == "__main__":
-    conv = Convolutional((1, 6, 6), 3, 1, 1, filters=kernels)
+    activation = tanh()
+    conv = Convolutional((1, 6, 6), 3, 1, 1, filters=kernels, stride=(1, 1), activation=activation, biases=biases)
     y = conv.forward(mat)
     print(y)
-    deltas = conv.backward(mat, y)
-    print(deltas)
+    pool = AveragePool(2, input_shape=(1, 4, 4), activation=sigmoid(), biases=np.full((1, 4, 4), 0.26))
+    y = pool.forward(y)
+    print(y)
