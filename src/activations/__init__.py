@@ -10,7 +10,7 @@ def _identity_der():
 
 
 def identity():
-    return _identity, _identity_der
+    return _identity(), _identity_der()
 
 
 def sigmoid():

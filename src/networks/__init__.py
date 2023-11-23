@@ -1,5 +1,5 @@
 import numpy as np
-from src.layers import Dense
+from src.layers import DenseLayer
 
 
 def _backpropagate(layers, y, d):
@@ -18,10 +18,10 @@ def _backpropagate(layers, y, d):
 class FeedForward:
     layers = None
 
-    def __init__(self, layers: list[Dense] = None) -> None:
+    def __init__(self, layers: list[DenseLayer] = None) -> None:
         self.layers = [] if layers is None else layers
 
-    def add(self, layer: Dense):
+    def add(self, layer: DenseLayer):
         self.layers.append(layer)
 
     def __calc(self, x):
