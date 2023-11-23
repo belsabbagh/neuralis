@@ -82,16 +82,17 @@ class Convolutional(Layer):
         return np.array(y)
 
     def backward(self, y, deltas):
-        dL_dinput = np.zeros(self.input_shape)
-        dL_dfilters = np.zeros_like(self.filters)
-
-        for i in range(len(self.filters)):
-            dL_dfilters[i] = self.op(
-                self.input_data,
-                deltas[i],
-            )
-            dL_dinput += self.op(deltas[i], self.filters[i])
-        return dL_dinput
+        return np.array(
+            [
+                [
+                    [
+                        cross_correlate(deltas[i], self.filters[i][j])
+                        for j in range(len(self.filters[i]))
+                    ]
+                    for i in range(len(self.filters))
+                ],
+            ]
+        )
 
     def update(self, y, d, lr=0.01):
         self.filters -= lr * d

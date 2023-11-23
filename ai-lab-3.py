@@ -9,12 +9,14 @@ mat = [[
     [103, 105, 92, 104, 99, 97],
 ]]
 
-kernels = np.array([[
+kernels = np.array([[[
     [0.4, 0.6, 0.8],
     [0.3, 0.9, 1.2],
     [3.1, 1.2, 0.7],
-]])
+]]])
 if __name__ == "__main__":
-    conv = Convolutional((1, 6, 6), 3, 1, 1, filters=[kernels])
+    conv = Convolutional((1, 6, 6), 3, 1, 1, filters=kernels)
     y = conv.forward(mat)
     print(y)
+    deltas = conv.backward(mat, y)
+    print(deltas)
