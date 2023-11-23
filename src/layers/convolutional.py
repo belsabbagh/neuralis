@@ -27,6 +27,7 @@ class Convolutional(Layer):
         self,
         input_shape,
         filter_size,
+        output_depth,
         num_filters,
         activation=None,
         op=None,
@@ -42,34 +43,43 @@ class Convolutional(Layer):
         self.activation, self.derv = activation
         self.input_shape = input_shape
         self.filters = np.array(
-            self.__init_filters(num_filters, filter_size)
+            self.__init_filters(num_filters, output_depth, filter_size)
             if filters is None
             else filters
         )
+        output_matrix_size = (i - filter_size + 1 for i in input_shape[1:])
+        self.output_shape = (len(self.filters), *output_matrix_size)
         self.biases = np.array(
-            self.__init_biases(num_filters, filter_size) if biases is None else biases
-        )
-        self.output_shape = (
-            len(self.filters),
-            *(i - filter_size + 1 for i in input_shape),
+            self.__init_biases(num_filters, output_matrix_size)
+            if biases is None
+            else biases
         )
 
-    def __init_filters(self, num_filters, filter_size):
-        return np.random.uniform(-1, 1, (num_filters, filter_size, filter_size))
+    def __init_filters(self, num_filters, depth, filter_size):
+        return np.random.uniform(-1, 1, (num_filters, depth, filter_size, filter_size))
 
-    def __init_biases(self, num_filters, filter_size):
-        return np.zeros((num_filters, filter_size, filter_size))
+    def __init_biases(self, num_filters, output_matrix_size):
+        return np.zeros((num_filters, *output_matrix_size))
 
     def forward(self, x, verbose=1):
         x = np.array(x)
         if verbose:
             print(f"Input: {x}")
-        y = np.array([cross_correlate(x, i) for i in self.filters])
-        # y = self.activation(y)
+        y = [
+            np.sum(
+                [
+                    cross_correlate(x[i], self.filters[i][j])
+                    for j in range(len(self.filters[i]))
+                ],
+                axis=0,
+            )
+            + self.biases[i]
+            for i in range(len(self.filters))
+        ]
         if verbose:
             print(f"Output: {y}")
             print(f"--------------------------------------")
-        return y
+        return np.array(y)
 
     def backward(self, y, deltas):
         dL_dinput = np.zeros(self.input_shape)
