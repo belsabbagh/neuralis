@@ -31,6 +31,7 @@ class Convolutional(Layer):
         activation=None,
         op=None,
         filters=None,
+        biases=None,
     ):
         super().__init__()
         if op is None:
@@ -39,25 +40,31 @@ class Convolutional(Layer):
         if activation is None:
             activation = identity()
         self.activation, self.derv = activation
-        input_height, input_width = input_shape
         self.input_shape = input_shape
-        self.filter_shape = (num_filters, filter_size, filter_size)
-        self.output_shape = (
-            num_filters,
-            input_height - filter_size + 1,
-            input_width - filter_size + 1,
+        self.filters = np.array(
+            self.__init_filters(num_filters, filter_size)
+            if filters is None
+            else filters
         )
-        self.filters = [np.random.randn(*self.filter_shape) for _ in range(num_filters)] if filters is None else filters
-        self.num_filters = len(self.filters)
-        self.biases = np.random.randn(*self.output_shape)
+        self.biases = np.array(
+            self.__init_biases(num_filters, filter_size) if biases is None else biases
+        )
+        self.output_shape = (
+            len(self.filters),
+            *(i - filter_size + 1 for i in input_shape),
+        )
+
+    def __init_filters(self, num_filters, filter_size):
+        return np.random.uniform(-1, 1, (num_filters, filter_size, filter_size))
+
+    def __init_biases(self, num_filters, filter_size):
+        return np.zeros((num_filters, filter_size, filter_size))
 
     def forward(self, x, verbose=1):
         x = np.array(x)
         if verbose:
             print(f"Input: {x}")
-        y = np.array(
-            [cross_correlate(x, i) for i in self.filters]
-        )
+        y = np.array([cross_correlate(x, i) for i in self.filters])
         # y = self.activation(y)
         if verbose:
             print(f"Output: {y}")
@@ -68,7 +75,7 @@ class Convolutional(Layer):
         dL_dinput = np.zeros(self.input_shape)
         dL_dfilters = np.zeros_like(self.filters)
 
-        for i in range(self.num_filters):
+        for i in range(len(self.filters)):
             dL_dfilters[i] = self.op(
                 self.input_data,
                 deltas[i],
