@@ -1,5 +1,6 @@
 import numpy as np
-from src.layers import DenseLayer
+from src.layers import Dense
+from src.layers.base import Layer
 
 
 def _backpropagate(layers, y, d):
@@ -16,17 +17,13 @@ def _backpropagate(layers, y, d):
 
 
 class FeedForward:
-    layers = None
+    layers: list[Dense]
 
-    def __init__(self, layers: list[DenseLayer] = None) -> None:
+    def __init__(self, layers: list[Dense]) -> None:
         self.layers = [] if layers is None else layers
 
-    def add(self, layer: DenseLayer):
-        self.layers.append(layer)
-
     def __calc(self, x):
-        """Calculate the output of the network.
-        """
+        """Calculate the output of the network."""
         res = []
         x_in = x
         for layer in self.layers:
@@ -34,9 +31,9 @@ class FeedForward:
             res.append(x_in)
         return res
 
-    def update_weights(self, y_pred, deltas,alpha=0.1):
+    def update_weights(self, y_pred, deltas, alpha=0.1):
         for layer, delta in zip(self.layers[1:], deltas):
-            layer.update(y_pred, delta, alpha=alpha)
+            layer.update(y_pred, delta, lr=alpha)
 
     def fit(self, x, y, epochs=10, alpha=0.01):
         for i in range(epochs):
@@ -61,4 +58,4 @@ class FeedForward:
         )
 
     def __dict__(self):
-        return {"layers": [dict(i) for i in self.layers]}
+        return {"layers": [i for i in self.layers]}

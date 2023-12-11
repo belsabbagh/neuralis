@@ -22,25 +22,23 @@ def update(w, y, d, alpha=0.1):
 class Dense(Layer):
     """Each layer has $n$ neurons, a weight matrix $W$ of size $n \\times m + 1$ where $m$ is the number of inputs, and an activation function $\\sigma$."""
 
-    weights = None
-    bias = None
-    input_shape = None
+    weights: np.ndarray
+    bias: np.ndarray
+    input_shape: int
 
     def __init__(
         self,
         units,
         activation,
-        weights: Optional[list[list[float]]],
+        weights: Optional[np.ndarray] = None,
         input_shape: Optional[int] = None,
     ) -> None:
-        if weights is not None and len(weights) != units:
-            raise ValueError(
-                f"Units ({units}) and weights ({len(weights)}) count mismatch!"
-            )
-        if input_shape is None and weights is not None:
-            input_shape = len(weights[0]) - 1
+        super().__init__()
+        if input_shape is None:
+            input_shape = 1
         if weights is None:
             weights = np.random.rand(units, input_shape + 1)
+        self.input_shape = input_shape
         self.activation, self.derv = activation
         self.units = units
         self.weights = np.array(weights)

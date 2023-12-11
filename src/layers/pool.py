@@ -68,7 +68,7 @@ class Pool(Layer):
                 for j in range(self.output_width):
                     start_i, end_i = self.__get_bounds(i)
                     start_j, end_j = self.__get_bounds(j)
-                    patch = self.input_data[c, start_i:end_i, start_j:end_j]
+                    patch = y[c, start_i:end_i, start_j:end_j]
                     mask = patch == np.max(patch)
                     dL_dinput[c, start_i:end_i, start_j:end_j] = deltas[c, i, j] * mask
         return dL_dinput

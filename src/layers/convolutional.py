@@ -75,10 +75,14 @@ class Convolutional(Layer):
         print(f"\\text{{Output Shape: }} {y.shape}")
         for i in range(len(self.filters)):
             for j in range(len(self.filters[i])):
-                c=cross_correlate(x[j], self.filters[i][j], self.stride, self.biases[i])
-                c2= c + self.biases[i]
+                c = cross_correlate(
+                    x[j], self.filters[i][j], self.stride, self.biases[i]
+                )
+                c2 = c + self.biases[i]
                 y[i] = self.activation(c2)
-                print(f"Y_{{{i+1}{j+1}}}=\\sigma({matrix_to_latex(c)} + {matrix_to_latex(self.biases[i])}) = {matrix_to_latex(y[i])} \\\\")
+                print(
+                    f"Y_{{{i+1}{j+1}}}=\\sigma({matrix_to_latex(c)} + {matrix_to_latex(self.biases[i])}) = {matrix_to_latex(y[i])} \\\\"
+                )
         # y = np.array(
         #     [
         #         self.activation(
@@ -101,17 +105,16 @@ class Convolutional(Layer):
         return y
 
     def backward(self, y, deltas):
-        return np.array(
+        deltas = [
             [
                 [
-                    [
-                        cross_correlate(deltas[i], self.filters[i][j])
-                        for j in range(len(self.filters[i]))
-                    ]
-                    for i in range(len(self.filters))
-                ],
-            ]
-        )
+                    cross_correlate(deltas[i], self.filters[i][j], (1, 1), 0)
+                    for j in range(len(self.filters[i]))
+                ]
+                for i in range(len(self.filters))
+            ],
+        ]
+        return np.array(deltas)
 
     def update(self, y, d, lr=0.01):
         self.filters -= lr * d

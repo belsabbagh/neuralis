@@ -1,10 +1,11 @@
+import numpy as np
 from src.networks import FeedForward
 from src.activations import relu
 from src.layers import Dense
 
 activation = relu()
 units = [4, 3, 1]
-weights = [
+weights = np.array([
     [
         [0.8, 0.5, 0.3, -0.1, 0.41],
         [-0.2, 0.1, 0.5, 0.22, -0.1],
@@ -19,7 +20,7 @@ weights = [
     [
         [0.21, 0.2, -0.1, 0.32],
     ],
-]
+])
 
 nn = FeedForward(
     [
