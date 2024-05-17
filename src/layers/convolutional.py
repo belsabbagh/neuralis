@@ -5,12 +5,6 @@ from scipy.signal import correlate2d
 import os
 
 
-def matrix_to_latex(mat):
-    """Convert a matrix to a LaTeX string."""
-    content = "\\\\\n".join([" & ".join([str(j) for j in i]) for i in mat])
-    return f"\\begin{{bmatrix}}\n{content}\n\\end{{bmatrix}}"
-
-
 def convolution_iterator(mat, kernel, stride):
     """Iterate over a matrix with a kernel."""
     for i in range(0, mat.shape[0] - kernel.shape[0] + 1, stride[0]):
@@ -80,25 +74,23 @@ class Convolutional(Layer):
                 )
                 c2 = c + self.biases[i]
                 y[i] = self.activation(c2)
-                print(
-                    f"Y_{{{i+1}{j+1}}}=\\sigma({matrix_to_latex(c)} + {matrix_to_latex(self.biases[i])}) = {matrix_to_latex(y[i])} \\\\"
+
+        y = np.array(
+            [
+                self.activation(
+                    np.sum(
+                        [
+                            cross_correlate(
+                                x[i], self.filters[i][j], self.stride, self.biases[i]
+                            )
+                            for j in range(len(self.filters[i]))
+                        ],
+                        axis=0,
+                    ) + self.biases[i]
                 )
-        # y = np.array(
-        #     [
-        #         self.activation(
-        #             np.sum(
-        #                 [
-        #                     cross_correlate(
-        #                         x[i], self.filters[i][j], self.stride, self.biases[i]
-        #                     )
-        #                     for j in range(len(self.filters[i]))
-        #                 ],
-        #                 axis=0,
-        #             ) + self.biases[i]
-        #         )
-        #         for i in range(len(self.filters))
-        #     ]
-        # )
+                for i in range(len(self.filters))
+            ]
+        )
         if verbose:
             print(f"Output: {y}")
             print(f"--------------------------------------")
